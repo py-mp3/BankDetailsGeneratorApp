@@ -1,11 +1,47 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
+import { Image, StyleSheet, Platform, Button } from 'react-native';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import {useState} from 'react';
 
 export default function HomeScreen() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [visible, setVisible] = useState(true);
+  async function getPassword() {
+    try {
+      const response = await fetch('http://localhost:3000/password'); 
+      if (!response.ok) {
+        console.log('Error:', response.status);
+      }
+  
+      const json = await response.json();
+      setPassword(json.password);
+      console.log(json);
+    } catch (error: any) {
+      console.log('Error:', error.message)
+    console.log(password)
+    setPassword(password);
+  }
+  }
+  async function getUsername() {
+    try {
+      const response = await fetch('http://localhost:3000/username'); 
+      if (!response.ok) {
+        console.log('Error:', response.status);
+      }
+  
+      const json = await response.json();
+      setUsername(json.username);
+      console.log(json);
+    } catch (error: any) {
+      console.log('Error:', error.message)
+    console.log(username)
+    setUsername(username);
+  }
+  }
+  
+  
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
@@ -17,37 +53,29 @@ export default function HomeScreen() {
       }>
       <ThemedView style={styles.titleContainer}>
         <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
       </ThemedView>
       <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
+        <ThemedText type="subtitle">Try my Username generator</ThemedText>
         <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
+         Press the button to generate a password
+         <Button title="Generate Username" onPress={() =>getUsername()} />
         </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
         <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
+          <ThemedText type="defaultSemiBold">Username:{username}</ThemedText>
         </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
+        <ThemedText type="subtitle">Try my password generator</ThemedText>
         <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
+         Press the button to generate a password
+         <Button title="Generate Password" onPress={() =>getPassword()} />
+        </ThemedText>
+        <ThemedText>
+          {visible?<ThemedText type="defaultSemiBold">Password:{password}</ThemedText>: <ThemedText type="defaultSemiBold">Password:********</ThemedText>}
+        </ThemedText>
+        <ThemedText>
+          <Button title="Hide password" onPress={() =>setVisible(!visible)} />
+        </ThemedText>
+        <ThemedText>
+          <Button title="Copy" onPress={() =>navigator.clipboard.writeText(password)} />
         </ThemedText>
       </ThemedView>
     </ParallaxScrollView>
@@ -72,3 +100,4 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
 });
+
